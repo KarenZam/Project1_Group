@@ -18,7 +18,7 @@ angular.module('TickeyApp')
 	
 	// --------- timer  ------------- //
       	
-		$scope.minutes = "00";
+		  $scope.minutes = "00";
     	$scope.seconds = "05";
     	$scope.currentNumberOfSeconds = 5;
     	$scope.intervalCallback;
@@ -56,7 +56,7 @@ angular.module('TickeyApp')
 	// --------- end timer  ------------- //
 
 		$scope.playComputer = true;
-    	$scope.currentPlayer = "start";
+    $scope.currentPlayer = "start";
 		$scope.totalLine = 3;
 		$scope.totalColumn = 3;
 		$scope.totalCellbyLine = $scope.totalColumn;
@@ -67,36 +67,48 @@ angular.module('TickeyApp')
 		$scope.cellObj;
 		$scope.cell = [];
 		$scope.cellChanged;
+    $scope.levelComputer = 0; // 0 - 1 - 2
+    $scope.computerModeDescription = [];
+    $scope.computerModeDescription[0] = "I am sure you can do better! try one level up!";
+    $scope.computerModeDescription[1] = "Not that easy!";
+    $scope.computerModeDescription[2] = "Whaouuuu! Can you win ?";
 
 		$scope.switchPlayersMode = function() {
-			if ($scope.currentPlayer== "start") {
+			if ($scope.currentPlayer == "start") {
 				if($scope.playComputer)	{$scope.playComputer=false}
     			else {$scope.playComputer=true}	
 			}
-    	}
+    }
+
+    $scope.switchLevelMode = function() {
+      if ($scope.currentPlayer == "start") {
+        $scope.levelComputer++;
+        $scope.levelComputer = $scope.levelComputer%3;
+      }
+    }
 
 		$scope.makeNextMoveAt = function(objEvent) {
 			var location;
-			$scope.cellObj = objEvent;	// window.eventObj = objEvent;   debug only, not for production!
+			$scope.cellObj = objEvent;	
+
+      window.eventObj = objEvent;   // debug only, not for production!
+
   			location = $scope.cellObj.target.id;
+        // console.log("id : "+$scope.cellObj.target.id);
+        // console.log("class name : "+$scope.cellObj.target.className);
 
   			if ($scope.currentPlayer=="start") { 
   				$scope.initializePlayer(); 
   			};
-			
   			if (!$scope.currentSquareClickedAlready(location)) {
   				$scope.markSquareAsOccupiedAt(location);
     			if (!$scope.isMeaWinner() && !$scope.isDraw()) {
+              $scope.swapCurrentPlayerToOpponent();
     					if ($scope.playComputer == true) {
-    		    			$scope.swapCurrentPlayerToOpponent();
-    						$scope.computerChooseCell();
-    						$scope.isDraw();
-    						$scope.isMeaWinner();
+                  $timeout($scope.computerPlay, 400);
     					}
-    				$scope.swapCurrentPlayerToOpponent();
     			}
   			}
-
 		};
 
 		$scope.initializePlayer = function() {
@@ -117,7 +129,6 @@ angular.module('TickeyApp')
 			for (var i=1; i<=$scope.totalCellNumber; i++) {
 				$scope.cell[i]="";
 			}
-  			$scope.currentPlayer = "start";
 		}	
 
 		$scope.currentSquareClickedAlready = function(location) { 
@@ -142,13 +153,26 @@ angular.module('TickeyApp')
   			}	
 		};	
 
+    $scope.computerPlay = function() {
+      if ($scope.levelComputer != 0) {
+        if ($scope.levelComputer == 1)
+        $scope.computerLevel1();
+        else {
+          $scope.computerLevel2();
+        }
+      }
+      else {
+        $scope.computerChooseCell();
+      }
+      $scope.isMeaWinner();
+      $scope.isDraw();
+      $scope.swapCurrentPlayerToOpponent();
+    }
+
 		$scope.computerChooseCell = function() {
 			var locationComputer;
 			locationComputer = Math.floor((Math.random()*9)+1);
 			if ($scope.cell[locationComputer] == "") { 
-				// setTimeout(function(){$scope.markSquareAsOccupiedAt(locationComputer);}, 800);
-				console.log("inside if computer choose cell");
-				console.log("computer cell : "+locationComputer);
 				$scope.markSquareAsOccupiedAt(locationComputer);
     			}
 			else {
@@ -160,7 +184,7 @@ angular.module('TickeyApp')
   			if ($scope.cellChanged == $scope.totalCellNumber) {
         		bootbox.alert("It's a draw, try again!");
         		$timeout($scope.cleanBoard, 3000);
-  				$scope.currentPlayer = "start";
+            $scope.endOfGame();
   				return true;
       		}
       		return false;
@@ -222,21 +246,97 @@ angular.module('TickeyApp')
 				}
 			}
   			// $rootScope.gameEndShowButton = true;
-  			$timeout($scope.cleanBoard, 3000);
+  		$scope.endOfGame();
+      $timeout($scope.cleanBoard, 3000);
 		};
+
+    $scope.endOfGame = function() {
+      $scope.currentPlayer = "start";
+      $scope.cellChanged = 0;
+    }
 
     ///////////////////////// level 2 ///////////////////
 
-    $scope.computerCheckLine() {
-      for (var i=1; i<=7; i+3) {
-        if($scsope.cell[i]!="") {
-          if ($scsope.cell[i+1]!="" && $scsope.cell[i]!="i+2") {
-        }
-        else {
-
-        }
+    $scope.computerCheck3cells = function (location1, location2, location3, player) {
+      if ( ($scope.cell[location1] == player) && ($scope.cell[location2] == player) ){
+        if (!$scope.currentSquareClickedAlready(location3)) {
+              $scope.markSquareAsOccupiedAt(location3);
+              return true;
+            }
       }
+      if ( ($scope.cell[location1] == player) && ($scope.cell[location3] == player) ){
+        if (!$scope.currentSquareClickedAlready(location2)) {
+              $scope.markSquareAsOccupiedAt(location2);
+              return true;
+            }
       }
+      if ( ($scope.cell[location2] == player) && ($scope.cell[location3] == player) ){
+        if (!$scope.currentSquareClickedAlready(location1)) {
+              $scope.markSquareAsOccupiedAt(location1);
+              return true;
+            }
+      }
+      return false;
     }
 
+    $scope.computerCheckLine = function(playerToCHeck) {
+      for (var i=1; i<=7; i=i+3) {
+        if ($scope.computerCheck3cells(i,i+1,i+2,playerToCHeck)) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    $scope.computerCheckColumn = function(playerToCHeck) {
+      for (var i=1; i<=3; i++) {
+        if ($scope.computerCheck3cells(i,i+3,i+6,playerToCHeck)) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    $scope.computerCheckDiagonal = function(playerToCHeck) {
+      if ($scope.computerCheck3cells(1,5,9,playerToCHeck)) {
+          return true;
+        }
+      if ($scope.computerCheck3cells(3,5,7,$scope.playerIs)) {
+          return true;
+        }
+    }
+
+
+
+///////////////////////// level 3 ///////////////////
+
+  $scope.computerLevel1 = function() {
+    if (!$scope.computerCheckLine($scope.playerIs)) {
+          if (!$scope.computerCheckColumn($scope.playerIs)) {
+            if (!$scope.computerCheckDiagonal($scope.playerIs)) {
+              $scope.computerChooseCell();    
+            }
+          }
+        }   
+  }
+
+  $scope.computerLevel2 = function() {
+    var computerPlayer = "x";
+    if ($scope.playerIs == "x")
+      {
+        computerPlayer = "o";
+      }
+      console.log("computer player : "+computerPlayer);
+    if (!$scope.computerCheckLine(computerPlayer)) {
+          if (!$scope.computerCheckColumn(computerPlayer)) {
+            if (!$scope.computerCheckDiagonal(computerPlayer)) {
+              $scope.computerLevel1();    
+            }
+          }
+        }   
+  }
+
 })
+
+
+
