@@ -10,12 +10,18 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <!-- Reset normalize-css  -->
+    <link rel="stylesheet" href="//normalize-css.googlecode.com/svn/trunk/normalize.css">
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" >
 
         <!-- build:css(.tmp) styles/main.css -->
         <link rel="stylesheet" href="styles/main.css">
+        <link rel="stylesheet" href="styles/animate-custom.css">
         <!-- endbuild -->
-</head>
-  <body>
+    
+
+  </head>
+  <body data-ng-app="TickeyApp">
     <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
@@ -24,34 +30,35 @@
       <script src="bower_components/es5-shim/es5-shim.js"></script>
       <script src="bower_components/json3/lib/json3.min.js"></script>
     <![endif]-->
-    <h1>TIC TAC TOE!</h1>
-    <h1>Let's play :</h1>
+    <header>
+        <ul class="headerButtons">
+            <li><a data-ng-hide="is_game_board_page_small_button" id="play" href="#/game_board"></a></li>
+            <li><a data-ng-hide="is_how_to_page" id="howTo" href="#/how_to"></a></li>
+            <li><a  data-ng-hide="is_home_page" id="home" href="#/"></a></li>
+        </ul>
+        <div id="title"><h2>TIC TAC TOE!</h2></div>
+    </header>
 
-    <div id="gameboard">
-      <div class="row">
-        <div class="cell"> <span class="x">X</p> </div>
-        <div class="cell"> <span class="o">O</p> </div>
-        <div class="cell"> <span class="x">X</p> </div>
-      </div>
-      <div class="middle_line"></div>
-      <div class="row">
-        <div class="cell"> <span class="o">O</p> </div>
-        <div class="cell"> <span class="x">X</p> </div>
-        <div class="cell"> <span class="o">O</p> </div>
-      </div>
-      <div class="row">
-        <div class="cell"> <span class="o">O</p> </div>
-        <div class="cell"> <span class="x">X</p> </div>
-        <div class="cell"> <span class="x">X</p> </div>
-      </div>
-    </div>
+    <div data-ng-view></div>
+    <!-- change function makenextmove to handleClick -->
 
-    <script src="bower_components/jquery/jquery.js"></script>
+    <!-- build:js({.tmp,app}) scripts/scripts.js -->
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <script src="scripts/bootbox.js"></script>
+
+        <!-- ANGULAR -->
     <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-localstorage/angular-local-storage.js"></script>
 
-        <!-- build:js({.tmp,app}) scripts/scripts.js -->
-        <script src="scripts/app.js"></script>
-        
+    <script src="scripts/app.js"></script> 
+    <script src="scripts/controllers/game_board.js"></script>
+    <script src="scripts/controllers/how_to.js"></script>
+    <script src="scripts/controllers/index.js"></script>
+    <script src="scripts/directives/tickle_me.js"></script>
+
+    
         <!-- endbuild -->
 </body>
 </html>

@@ -1,38 +1,93 @@
+/*HEADER*/
+
+.headerButtons {
+    /*clear: both;*/
+    text-align: right;
+    margin-right: 40px;
+    margin-top: 40px;
+    padding: 0px;
+}
+
+.headerButtons li {
+    display: inline;
+}
+.headerButtons a {
+    text-decoration: none;
+    display: inline-block;
+}
+
+.headerButtons #play,.headerButtons #howTo, .headerButtons #home{
+    left: 0;  
+    background-repeat:no-repeat;
+    background-size: 95%;
+    height: 30px;
+    width: 30px;
+}
+
+#howTo {
+    float: right;
+    background: url("../images/questionMark.jpg");
+    border-radius: 100%;
+}
+#play {
+    float: right;
+    background: url("../images/play.jpg")
+}
+#home {
+    float: right;
+    background: url("../images/home.jpg")   
+}
+
+/*END HEADER*/
+
 body {
+    clear: both;
     font-family: Courier;
-    background: black;
+    background: white;
 }
 
 h1 {
+    font-size: 50px;
     text-align: center;
-    color: white;
+    color: black;
+    background: white;
+    padding-top: 0;
+    margin: 0;
+}
+#title {
+    text-align: center;
+    margin: 0 auto 15px;
+    width: 700px;
+    border-bottom: 2px solid black;
 }
 
 #gameboard {
     margin: 0 auto;
-    width: 480px;
-    height: 480px;
+    margin-top: 35px;
+    width: 240px;
+    height: 240px;
     overflow: hidden;
-    background: black;
-    /*text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #ff00de, 0 0 70px #ff00de, 0 0 80px #ff00de, 0 0 100px #ff00de, 0 0 150px #ff00de;*/
+    background: none;
 }
 
 .row {
     margin: 0 auto;
-    width: 480px;
-    height: 160px;
+    width: 240px;
+    height: 80px;
     clear: left;
     border-top: 2px solid white;
     border-bottom: 2px solid white;
 }
 .cell {
-    width: 156px;
-    height: 160px;
+    width: 78px;
+    height: 80px;
     float: left;
-    line-height: 158px;
+    line-height: 79px;
     vertical-align: middle;
     text-align: center;
-    font-size: 70px;
+    font-size: 80px;
+    background-color: black;
+    color: yellow;
 }
 
 .cell:nth-child(2) {
@@ -48,23 +103,80 @@ h1 {
     border-bottom: white;
 }
 
-.o {
-    /*color: #e5e5ff;*/
-    color:  #ffff00;
+/*.o {
+    color: #e5e5ff;
+    color:  red;
     text-shadow: 0px 2px 3px #555 #b2b2ff;
 }
 
 .x {
-    /*color: #ffd2e8;*/
-    /*color: #00ff00;*/
     color: #ff0000;
+    color: green;
 
-    /*text-shadow: 5px 5px 5px #555 #b2b2ff;*/
+    text-shadow: 5px 5px 5px #555 #b2b2ff;
+}*/
+
+#bigPlay {
+    width: 225px;
+    height: 225px;
+    margin: auto;
+    margin-top: 70px;
 }
 
+#howToParagraphe {
+    padding: 20px 10px 0 10px;
+    background: #eee;
+    width: 500px;
+    height: 225px;
+    margin: auto;
+    margin-top: 70px;
+}
 
-@media (max-width: 600p) {
-    nav {
-        float: left;
-    }
+#emptyBoardButton {
+    z-index: 100;
+    width: 30px;
+    height: 30px;
+    margin: auto;
+    margin: auto;
+    margin-top: 20px;
+}
+
+.boxBottom{
+    text-align: left;
+    margin-right: 40px;
+    margin-top: 40px;
+    padding: 0px;
+}
+
+#twoPlayers, #computer{
+    cursor: pointer;
+    margin-left: 10px;
+    background-repeat:no-repeat;
+    background-size: 95%;
+    height: 40px;
+    width: 40px;
+}
+.boxBottom p {
+    /*float: left;*/
+}
+
+.boxBottom {
+    float: right;
+    margin-right: 20px;  
+    border: 3px solid #ccc;
+    border-radius: 20%;
+    width: 70px;
+    height: 50px;
+    background-color: white;
+    padding: 2px auto;
+}
+
+.boxBottom p {
+    font-size: 15px;
+    text-align: center;
+    
+}
+
+#bottomButton {
+    margin-right: 30px;
 }
