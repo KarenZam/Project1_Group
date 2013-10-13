@@ -4,17 +4,19 @@ angular.module('TickeyApp')
 	.controller('GameBoardCtrl', 
 		function ($scope, $rootScope, $timeout, localStorageService) {
     
-		// localStorageService.clearAll();
-  //   	localStorageService.add('Favorite Sport','Ultimate Frisbee');
-  //   	localStorageService.add("names",["name1","name2","name3"]);
+		localStorageService.clearAll();
+    $scope.nbWin1 = 0;
+    $scope.nbWin2 = 0;
+    $scope.nbWinComputer = 0;
 
-  //   	console.log(localStorageService.get('names'));
-   
+    
+    localStorageService.add('player2',$scope.nbWin2);
+    localStorageService.add('computer',$scope.nbWinComputer);
+    localStorageService.add('player1',$scope.nbWin1);
 
-  //   	$rootScope.is_how_to_page = false;
-  //   	$rootScope.is_game_board_page_small_button = true;
-  //   	$rootScope.is_home_page = false;
-
+    localStorageService.get('player1');
+    localStorageService.get('player2');
+    localStorageService.get('computer');
 	
 	// --------- timer  ------------- //
       	
@@ -22,6 +24,7 @@ angular.module('TickeyApp')
     	$scope.seconds = "05";
     	$scope.currentNumberOfSeconds = 5;
     	$scope.intervalCallback;
+      $scope.timerRunning = false;
 
     	$scope.increment = function() {
       		$scope.currentNumberOfSeconds--;
@@ -32,18 +35,31 @@ angular.module('TickeyApp')
       		} 
       		else {
       			$scope.seconds=0;
-      			$timeout.cancel($scope.intervalCallback);	
+      			$timeout.cancel($scope.intervalCallback);
+            console.log("fin du timer?");
+            $scope.stopTimer();
+            return;
       		}
       		$scope.intervalCallback = $timeout($scope.increment, 1000);
     	}
 
     	$scope.startTimer = function() {
+          $scope.timerRunning = true;
       		$scope.intervalCallback = $timeout($scope.increment, 1000);
     	}
 
     	$scope.stopTimer = function() {
-    		$timeout.cancel($scope.intervalCallback);
+        $scope.cleanTimer();
+        bootbox.alert("Time's up, try again!");
+        $timeout($scope.cleanBoard, 1500);
     	}
+
+      $scope.cleanTimer = function() {
+        $scope.timerRunning = false;
+        $timeout.cancel($scope.intervalCallback);
+        $scope.currentNumberOfSeconds=5;
+        $scope.seconds = "05";
+      }
 
     	$scope.formatZeroPadding = function(integer) {
       		if (integer < 10) {
@@ -75,8 +91,15 @@ angular.module('TickeyApp')
 
 		$scope.switchPlayersMode = function() {
 			if ($scope.currentPlayer == "start") {
-				if($scope.playComputer)	{$scope.playComputer=false}
-    			else {$scope.playComputer=true}	
+        $scope.nbWin1 = 0;
+				if($scope.playComputer)	{
+          $scope.nbWin2 = 0;
+          $scope.playComputer=false;
+        }
+    			else {
+            $scope.nbWinComputer = 0;
+            $scope.playComputer=true;
+          }	
 			}
     }
 
@@ -120,9 +143,7 @@ angular.module('TickeyApp')
   			else {
     			$scope.currentPlayer="o";
   			}
-  			if ($scope.playComputer == true) {
-  				$scope.playerIs = $scope.currentPlayer;
-  			}
+  			$scope.playerIs = $scope.currentPlayer;
 		}
 
 		$scope.cleanBoard = function() {
@@ -182,17 +203,23 @@ angular.module('TickeyApp')
 
 		$scope.isDraw = function() {
   			if ($scope.cellChanged == $scope.totalCellNumber) {
+            if ($scope.timerRunning) {
+              $scope.cleanTimer();
+            }
         		bootbox.alert("It's a draw, try again!");
-        		$timeout($scope.cleanBoard, 3000);
+        		$timeout($scope.cleanBoard, 2000);
             $scope.endOfGame();
   				return true;
       		}
       		return false;
   		}
-
+/////////////////////////////////////////////////////////////////
 		$scope.isMeaWinner = function() {
   			if ($scope.IsOneLineCrossed() || $scope.IsOneColumnCrossed() || $scope.IsDiagonalCrossed()) {
-    			$scope.displayWinner();
+    			if ($scope.timerRunning) {
+            $scope.cleanTimer();
+          }
+          $scope.displayWinner();
     			return true;
   			}
   			return false;
@@ -228,7 +255,23 @@ angular.module('TickeyApp')
 			return false;
 		}
 
+    //////////////////////////////////////////////////
+
+    $scope.addingScore = function () {
+      if ($scope.currentPlayer == $scope.playerIs) {
+        $scope.nbWin1++;
+        return;
+      } 
+      if ($scope.playComputer) {
+        $scope.nbWinComputer ++;
+      }
+      else {
+        $scope.nbWin2 ++;
+      }
+    }
+
 		$scope.displayWinner = function() {
+      $scope.addingScore();
 			if(!$scope.playComputer) {
 				if ($scope.currentPlayer=="x") {
     			bootbox.alert("x wins! Bravo");
@@ -242,12 +285,12 @@ angular.module('TickeyApp')
 					bootbox.alert("You beat the computer! Bravo");
 				}
 				else {
-					bootbox.alert("You lost! Try again!");	
+					bootbox.alert("You lost! Try again!");
 				}
 			}
   			// $rootScope.gameEndShowButton = true;
   		$scope.endOfGame();
-      $timeout($scope.cleanBoard, 3000);
+      $timeout($scope.cleanBoard, 2000);
 		};
 
     $scope.endOfGame = function() {

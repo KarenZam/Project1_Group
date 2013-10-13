@@ -4,6 +4,7 @@
 
 // app declaration with []
 angular.module('LocalStorageModule').value('prefix', 'myDatabaseNewName');
+
 angular.module('TickeyApp',['LocalStorageModule'])
   .config(function ($routeProvider){
       $routeProvider
