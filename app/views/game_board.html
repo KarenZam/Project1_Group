@@ -23,15 +23,19 @@
       </div>
     </div>
 
-  <div id="score">
-    <p>Player 1: {{nbWin1}}</p>
-    <p data-ng-hide="playComputer">Player 2: {{nbWin2}}</p>
-    <p data-ng-show="playComputer">Computer: {{nbWinComputer}}</p>
-  </div>
+    <div id="score">
+      <p>Player 1: {{nbWin1}}</p>
+      <p data-ng-hide="playComputer"> Player 2: {{nbWin2}} </p>
+      <p data-ng-show="playComputer"> Computer: {{nbWinComputer}} </p>
+    </div>
 
   <div id="bottomButton">
+
+    <div class="boxBottom" data-ng-click="startTimer()"><p>{{seconds}}s</p></div>
+    <div class="boxBottom" data-ng-click="startTimer()"><img src="./images/timer.jpg" id="timer"></div>
+    
     <div data-ng-show="playComputer" class="boxBottom" class="playerMode" data-ng-click="switchLevelMode()">
-      <p>Level {{levelComputer}}</p>
+      <img src="./images/level_{{levelComputer}}.jpg" id="levelNb">
     </div>
 
     <div data-ng-show="playComputer" class="boxBottom" class="playerMode" >
@@ -42,12 +46,15 @@
       <img src="./images/2players.jpg" id="twoPlayers" data-ng-click="switchPlayersMode()">
     </div>
     
-    <button class="boxBottom" data-ng-click="stopTimer()"><p>END TIMER</p></button>
-    <div class="boxBottom" data-ng-click="startTimer()"><p>{{seconds}}</p></div>
-    <button class="boxBottom" data-ng-click="startTimer()"><p>START TIMER</p></button>
+    <!-- This is the stop timer button -->
+    <!-- <button class="boxBottom" data-ng-click="stopTimer()"><p>END TIMER</p></button> -->
+
+    
+
   </div>
 
-  <h5 data-ng-show="playComputer" id="computerModePhrase">Level {{levelComputer}} : {{computerModeDescription[levelComputer]}}</h5>
+  <h4 data-ng-show="playComputer" id="computerModePhrase">Level {{levelComputer}} : {{computerModeDescription[levelComputer]}}</h4>
+  <h4 data-ng-hide="playComputer" id="computerModePhrase">2 players mode!</h4>
 
   <!-- <div tickle-me>
     <img id="tickle" src="../../images/tickleMe.jpg" >

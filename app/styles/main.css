@@ -64,21 +64,41 @@ h1 {
 #gameboard {
     margin: 0 auto;
     margin-top: 35px;
-    width: 240px;
-    height: 240px;
+    width: 260px;
+    height: 250px;
     overflow: hidden;
     background: none;
 }
 
-.row {
+/*.row {
     margin: 0 auto;
     width: 240px;
     height: 80px;
     clear: left;
     border-top: 2px solid white;
     border-bottom: 2px solid white;
+}*/
+.row {
+    margin: 3px auto;
+    width: 240px;
+    height: 80px;
+    clear: left;
+    border-top: 0px solid white;
+    border-bottom: 1px solid white;
 }
 .cell {
+    width: 80px;
+    height: 80px;
+    float: left;
+    line-height: 79px;
+    vertical-align: middle;
+    text-align: center;
+    font-size: 80px;
+    background-color: black;
+    color: yellow;
+    border-right: 3px solid white;
+}
+/*.cell {
     width: 78px;
     height: 80px;
     float: left;
@@ -88,12 +108,17 @@ h1 {
     font-size: 80px;
     background-color: black;
     color: yellow;
-}
+    border-radius: 100%;
+}*/
 
-.cell:nth-child(2) {
+/*.cell:nth-child(2) {
     border-right: 4px solid white;
     border-left: 4px solid white;
-}
+}*/
+/*.cell:nth-child(2) {
+    border-right: 1px solid white;
+    border-left: 1px solid white;
+}*/
 
 .row:first-child {
     border-top: white;
@@ -126,7 +151,7 @@ h1 {
     padding: 20px 10px 0 10px;
     background: #eee;
     width: 500px;
-    height: 225px;
+    height: 305px;
     margin: auto;
     margin-top: 70px;
 }
@@ -147,16 +172,13 @@ h1 {
     padding: 0px;
 }
 
-#twoPlayers, #computer{
+#twoPlayers, #computer, #timer, #levelNb{
     cursor: pointer;
-    margin-left: 10px;
+    margin-left: 15px;
     background-repeat:no-repeat;
     background-size: 95%;
-    height: 40px;
-    width: 40px;
-}
-.boxBottom p {
-    /*float: left;*/
+    height: 45px;
+    width: 45px;
 }
 
 .boxBottom {
@@ -172,6 +194,27 @@ h1 {
     vertical-align: center;
 }
 
+#score {
+    float: left;
+    margin-right: 10px;  
+    border: 3px solid #ff69b4; /*#ccc*/
+    width: 120px;
+    height: 80px;
+    background-color: white;
+    padding: 0 auto;
+    line-height: 20px;
+    vertical-align: center;
+    margin-left: 40px;
+    margin-top: 40px;
+    border-radius: 30%;
+}
+
+#score p {
+    margin-top: 10px;
+    font-size: 15px;
+    text-align: center;
+}
+
 .boxBottom p {
     font-size: 15px;
     text-align: center;
@@ -179,12 +222,14 @@ h1 {
 }
 
 #bottomButton {
-    margin-right: 30px;
+    margin: 0 auto;
 }
 
 #computerModePhrase {
-    margin-top: 40px;
-    margin-right: 50px;
+    clear: both;
+    padding-top: 20px;
+    text-align: center;
+    /*margin-right: 50px;*/
 }
 /*
 #tickle {
@@ -198,8 +243,3 @@ h5 {
     text-align: center;
 }
 
-#score {
-    float : right;
-    margin-right: 30px;
-
-}

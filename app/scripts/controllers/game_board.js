@@ -4,6 +4,10 @@ angular.module('TickeyApp')
 	.controller('GameBoardCtrl', 
 		function ($scope, $rootScope, $timeout, localStorageService) {
     
+    $rootScope.is_how_to_page = false;
+    $rootScope.is_game_board_page_small_button = true;
+    $rootScope.is_home_page = false;
+
 		localStorageService.clearAll();
     $scope.nbWin1 = 0;
     $scope.nbWin2 = 0;
@@ -13,10 +17,6 @@ angular.module('TickeyApp')
     localStorageService.add('player2',$scope.nbWin2);
     localStorageService.add('computer',$scope.nbWinComputer);
     localStorageService.add('player1',$scope.nbWin1);
-
-    localStorageService.get('player1');
-    localStorageService.get('player2');
-    localStorageService.get('computer');
 	
 	// --------- timer  ------------- //
       	
@@ -85,9 +85,9 @@ angular.module('TickeyApp')
 		$scope.cellChanged;
     $scope.levelComputer = 0; // 0 - 1 - 2
     $scope.computerModeDescription = [];
-    $scope.computerModeDescription[0] = "I am sure you can do better! try one level up!";
-    $scope.computerModeDescription[1] = "Not that easy!";
-    $scope.computerModeDescription[2] = "Whaouuuu! Can you win ?";
+    $scope.computerModeDescription[0] = "Baby mode... sure you can win!";
+    $scope.computerModeDescription[1] = "Ninja mode... Not that easy!";
+    $scope.computerModeDescription[2] = "Guru mode... do your best!";
 
 		$scope.switchPlayersMode = function() {
 			if ($scope.currentPlayer == "start") {
