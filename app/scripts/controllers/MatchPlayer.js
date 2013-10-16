@@ -1,11 +1,12 @@
 'use strict';
 
 angular.module('TickeyApp')
-  .controller('MatchplayerCtrl', function ($scope, angularFire, $location) {
+  .controller('MatchplayerCtrl', function ($scope, angularFire, $location, $rootScope) {
    $scope.waitingRoom = {}; 
    var waitingRoomRef = new Firebase('https://tictactoezam.firebaseio.com/waitingRoom');
    $scope.promise = angularFire(waitingRoomRef, $scope, "waitingRoom");
 
+   $rootScope.IsOnLineGame = false;
    
 	function generateGameBoardNumber() {
 		return Math.floor(Math.random() * 123444456).toString(16);	
@@ -37,6 +38,7 @@ angular.module('TickeyApp')
 		var gameBoardNumber = $scope.waitingRoom.gameBoardNumber;
 		console.log("gameboard number : "+gameBoardNumber)
 		$scope.waitingRoom = {};
+		$rootScope.IsOnLineGame = true;
 
 		$location.path('game_board/' + gameBoardNumber + '/o');
 	}

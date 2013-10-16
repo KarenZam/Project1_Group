@@ -16,56 +16,113 @@ angular.module('TickeyApp')
   console.log("symbol : " + $scope.mySymbol);
   *************     VERY USEFULL     *********************/
 
-  console.log("before init");
-
   $scope.gameBoardId = $routeParams.id;
   $scope.mySymbol = $routeParams.mySymbol;
   $scope.gameBoard = [];
-  // var gameBoardRef = new Firebase('https://tictactoezam.firebaseio.com/room/'+ $routeParams.id);
-  var gameBoardRef = new Firebase('https://tictactoezam.firebaseio.com/rooms');
+  $scope.room = { board: ["", "", "", "", "", "", "", "", ""]};
+
+  // $scope.room = {boards:
+  //   {
+  //     board: ["", "", "", "", "", "", "", "", ""]
+  //   }
+
+  // };
+
+  var gameBoardRef = new Firebase('https://tictactoezam.firebaseio.com/room'+ $routeParams.id);
   $scope.promise = angularFire(gameBoardRef, $scope, 'room', {});
 
-  console.log("after init");
-
   $scope.promise.then (function () {
-    console.log("inside THEN");
-    $scope.room.push({ok: true, no: false});
-    if ($scope.gameBoard.length == 0 && $routeParams.mySymbol == 'x') {
-      console.log ("I am the first move : "+ $routeParams.mySymbol);
-      // $scope.makeMyMove();
-    } else {
-      console.log ("I am second Move symbol : "+ $routeParams.mySymbol);
-      // $scope.waitForOpponentToMove();
+    if ($rootScope.IsOnLineGame == true) {
+      $scope.gameBoard[1]="x";
+      if ($scope.gameBoard.length == 0 && $routeParams.mySymbol == 'x') {
+        console.log ("I am the first move : "+ $routeParams.mySymbol);
+        // $scope.makeMyMove();
+      } else {
+        console.log ("I am second Move symbol : "+ $routeParams.mySymbol);
+        // $scope.waitForOpponentToMove();
+      }
     }
   });  
+
+  // $scope.waitForOpponentToMove = function() {
+  //     gameBoardRef.once('child_added', function(snapshot) {
+  //       // gameBoardRef.off('child_added');
+        
+  //       if ($scope.isLosing()) {
+  //         // print losing
+  //         // redirect to match player if play again
+  //       } else if ($scope.isDraw()) {
+  //         // print draw
+  //         // redirect to match player if play again
+  //       } else {
+  //         $scope.makeMyMove();
+  //       }
+  //     });
+  //   };
+    
+  //   $scope.makeMyMove = function() {
+  //     $scope.listenForMyClick();
+      
+  //     if ($scope.isWinning()) {
+  //       // print winning
+  //       // redirect to match player if play again
+  //     } else if ($scope.isDraw()) {
+  //       // print draw
+  //       // redirect to match player if play again
+  //     } else {
+  //       $scope.waitForOpponentToMove();
+  //     }
+  //   }
+
+  //   $scope.listenForMyClick = function() {
+  //     // handle click event on cell 
+  //   }
+    
+  //   $scope.isLosing = function() {
+  //     return false; 
+  //   }
+    
+  //   $scope.isWinning = function() {
+  //     return false; 
+  //   }
+    
+  //   $scope.isDraw = function() {
+  //     return false; 
+  //   }    
+
 
   
 ///////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////    DISPLAY WITH FIREBASE   ///////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
-
-  var ref = new Firebase('https://tictactoezam.firebaseio.com/');
-  var p = angularFire(ref, $scope, "leaderData"); // p for promise
+  $scope.leaderData = {users: {}}; 
+  var leaderDataRef = new Firebase('https://tictactoezam.firebaseio.com/');
+  $scope.p = angularFire(leaderDataRef, $scope, "leaderData"); // p for promise
         // implicit  
+
 
   $scope.getName = function() {
     $scope.userName = prompt ("What's your user name ?");
-    if ($scope.leaderData.name.hasOwnProperty($scope.userName)) {    
-      alert($scope.userName+", your previous score is : "+$scope.leaderData.name[$scope.userName]);
+    if ($scope.leaderData.users.hasOwnProperty($scope.userName)) {    
+      alert($scope.userName+", your previous score is : "+$scope.leaderData.users[$scope.userName]);
     }
     else {
-      $scope.leaderData.name[$scope.userName] = 0;
+      $scope.p.then( function() {
+        $scope.leaderData.users[$scope.userName] = 0;
+      });
     }
-    $scope.userCreatedInFirebase = true;
+    $scope.userCreatedInFirebase = true;     //////////////////////////////////////////////
   };
 
-  $scope.addWinToLeaderBoard = function() {
-    $scope.leaderData.name[$scope.userName]++;
-  };
+  // $scope.addWinToLeaderBoard = function() {
+  //   if ($scope.leaderData.name.hasOwnProperty($scope.userName)) {    
+  //     $scope.leaderData.name[$scope.userName]++;  
+  //   }
+  // };
 
-  $scope.deletePlayer = function() {
-    delete $scope.leaderData.name[$scope.userName];
-  }
+  // $scope.deletePlayer = function() {
+  //   delete $scope.leaderData.name[$scope.userName];
+  // }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////    DISPLAY WITH LOCALSTORAGE   ///////////////////////////////
@@ -281,8 +338,8 @@ angular.module('TickeyApp')
               $scope.cleanTimer();
             }
         		bootbox.alert("It's a draw, try again!");
-        		$timeout($scope.cleanBoard, 2000);
-            $scope.endOfGame();
+        		$scope.endOfGame();
+            $timeout($scope.cleanBoard, 2000);
   				return true;
       		}
       		return false;
@@ -359,7 +416,7 @@ angular.module('TickeyApp')
 			else {
 				if ($scope.currentPlayer == $scope.playerIs) {
 					bootbox.alert("You beat the computer! Bravo");
-          $scope.addWinToLeaderBoard();           ////////////// adding to firebase! //////////////
+                             ////////////// adding to firebase! //////////////
 				}
 				else {
 					bootbox.alert("You lost! Try again!");

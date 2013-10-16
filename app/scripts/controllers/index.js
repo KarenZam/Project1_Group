@@ -5,5 +5,6 @@ angular.module('TickeyApp')
     $rootScope.is_how_to_page = false;
     $rootScope.is_game_board_page_small_button = true;
     $rootScope.is_home_page = true;
-  
+  	
+  	$rootScope.IsOnLineGame = false;
 });
