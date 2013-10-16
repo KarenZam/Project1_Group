@@ -2,11 +2,74 @@
 
 angular.module('TickeyApp')
 	.controller('GameBoardCtrl', 
-		function ($scope, $rootScope, $timeout, localStorageService) {
-    
-    $rootScope.is_how_to_page = false;
-    $rootScope.is_game_board_page_small_button = true;
-    $rootScope.is_home_page = false;
+		function ($scope, $rootScope, $timeout, localStorageService, angularFire, $routeParams) {
+
+
+///////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////     PLAY WITH FIREBASE     ///////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+  
+  /************     VERY USEFULL     ********************
+  $scope.gameBoardId = $routeParams.id;
+  $scope.mySymbol = $routeParams.mySymbol;
+  console.log("route param id : " + $scope.gameBoardId);
+  console.log("symbol : " + $scope.mySymbol);
+  *************     VERY USEFULL     *********************/
+
+  console.log("before init");
+
+  $scope.gameBoardId = $routeParams.id;
+  $scope.mySymbol = $routeParams.mySymbol;
+  $scope.gameBoard = [];
+  // var gameBoardRef = new Firebase('https://tictactoezam.firebaseio.com/room/'+ $routeParams.id);
+  var gameBoardRef = new Firebase('https://tictactoezam.firebaseio.com/rooms');
+  $scope.promise = angularFire(gameBoardRef, $scope, 'room', {});
+
+  console.log("after init");
+
+  $scope.promise.then (function () {
+    console.log("inside THEN");
+    $scope.room.push({ok: true, no: false});
+    if ($scope.gameBoard.length == 0 && $routeParams.mySymbol == 'x') {
+      console.log ("I am the first move : "+ $routeParams.mySymbol);
+      // $scope.makeMyMove();
+    } else {
+      console.log ("I am second Move symbol : "+ $routeParams.mySymbol);
+      // $scope.waitForOpponentToMove();
+    }
+  });  
+
+  
+///////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////    DISPLAY WITH FIREBASE   ///////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+
+  var ref = new Firebase('https://tictactoezam.firebaseio.com/');
+  var p = angularFire(ref, $scope, "leaderData"); // p for promise
+        // implicit  
+
+  $scope.getName = function() {
+    $scope.userName = prompt ("What's your user name ?");
+    if ($scope.leaderData.name.hasOwnProperty($scope.userName)) {    
+      alert($scope.userName+", your previous score is : "+$scope.leaderData.name[$scope.userName]);
+    }
+    else {
+      $scope.leaderData.name[$scope.userName] = 0;
+    }
+    $scope.userCreatedInFirebase = true;
+  };
+
+  $scope.addWinToLeaderBoard = function() {
+    $scope.leaderData.name[$scope.userName]++;
+  };
+
+  $scope.deletePlayer = function() {
+    delete $scope.leaderData.name[$scope.userName];
+  }
+
+///////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////    DISPLAY WITH LOCALSTORAGE   ///////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
 
 		localStorageService.clearAll();
     $scope.nbWin1 = 0;
@@ -18,7 +81,9 @@ angular.module('TickeyApp')
     localStorageService.add('computer',$scope.nbWinComputer);
     localStorageService.add('player1',$scope.nbWin1);
 	
-	// --------- timer  ------------- //
+///////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////               TIMER            ///////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
       	
 		  $scope.minutes = "00";
     	$scope.seconds = "05";
@@ -36,7 +101,6 @@ angular.module('TickeyApp')
       		else {
       			$scope.seconds=0;
       			$timeout.cancel($scope.intervalCallback);
-            console.log("fin du timer?");
             $scope.stopTimer();
             return;
       		}
@@ -69,7 +133,19 @@ angular.module('TickeyApp')
       		}
     	}
 
-	// --------- end timer  ------------- //
+///////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////        WHICH PAGE !!!          ///////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+
+
+    $rootScope.is_how_to_page = false;
+    $rootScope.is_game_board_page_small_button = true;
+    $rootScope.is_home_page = false;
+
+///////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////        COMPUTER / 2 PLAYERS MOD        ///////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+
 
 		$scope.playComputer = true;
     $scope.currentPlayer = "start";
@@ -114,11 +190,9 @@ angular.module('TickeyApp')
 			var location;
 			$scope.cellObj = objEvent;	
 
-      window.eventObj = objEvent;   // debug only, not for production!
+      // window.eventObj = objEvent;   // debug only, not for production!
 
   			location = $scope.cellObj.target.id;
-        // console.log("id : "+$scope.cellObj.target.id);
-        // console.log("class name : "+$scope.cellObj.target.className);
 
   			if ($scope.currentPlayer=="start") { 
   				$scope.initializePlayer(); 
@@ -213,7 +287,7 @@ angular.module('TickeyApp')
       		}
       		return false;
   		}
-/////////////////////////////////////////////////////////////////
+
 		$scope.isMeaWinner = function() {
   			if ($scope.IsOneLineCrossed() || $scope.IsOneColumnCrossed() || $scope.IsDiagonalCrossed()) {
     			if ($scope.timerRunning) {
@@ -270,6 +344,8 @@ angular.module('TickeyApp')
       }
     }
 
+    ///////////////////////////////////////////////////
+
 		$scope.displayWinner = function() {
       $scope.addingScore();
 			if(!$scope.playComputer) {
@@ -283,6 +359,7 @@ angular.module('TickeyApp')
 			else {
 				if ($scope.currentPlayer == $scope.playerIs) {
 					bootbox.alert("You beat the computer! Bravo");
+          $scope.addWinToLeaderBoard();           ////////////// adding to firebase! //////////////
 				}
 				else {
 					bootbox.alert("You lost! Try again!");
@@ -296,9 +373,17 @@ angular.module('TickeyApp')
     $scope.endOfGame = function() {
       $scope.currentPlayer = "start";
       $scope.cellChanged = 0;
-    }
+    };
 
-    ///////////////////////// level 2 ///////////////////
+    $scope.AddClassToCell = function(location) {
+      if ($scope.cell[location] != "") {
+        return $scope.cell[location];
+      }
+    };
+
+///////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////             COMPUTER / LEVEL 1         ///////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
 
     $scope.computerCheck3cells = function (location1, location2, location3, player) {
       if ( ($scope.cell[location1] == player) && ($scope.cell[location2] == player) ){
@@ -350,8 +435,9 @@ angular.module('TickeyApp')
     }
 
 
-
-///////////////////////// level 3 ///////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////             COMPUTER / LEVEL 3         ///////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
 
   $scope.computerLevel1 = function() {
     if (!$scope.computerCheckLine($scope.playerIs)) {
@@ -378,6 +464,7 @@ angular.module('TickeyApp')
           }
         }   
   }
+
 
 })
 

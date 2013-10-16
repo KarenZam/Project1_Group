@@ -76,12 +76,12 @@ h1 {
 }
 
 .row {
-    margin: 3px auto;
+    margin: 0 auto;
     width: 240px;
     height: 80px;
     clear: left;
-    border-top: 0px solid white;
-    border-bottom: 1px solid white;
+    border-top: 3px solid black;
+    border-bottom: 3px solid black;
 }
 .cell {
     width: 80px;
@@ -90,26 +90,29 @@ h1 {
     line-height: 79px;
     vertical-align: middle;
     text-align: center;
-    font-size: 80px;
-    background-color: black;
-    color: yellow;
-    border-right: 3px solid white;
+    font-size: 100px;
+    background-color: white;
+    border-right: 3px solid black;
+}
+
+.cell:last-child {
+    border-right: none;
 }
 
 .row:first-child {
-    border-top: white;
+    border-top: none;
 }
 
 .row:last-child {
-    border-bottom: white;
+    border-bottom: none;
 }
 
 .o {
-    color:  red;
+    color: red;
 }
 
 .x {
-    color: green;
+    color: blue;
 }
 
 .changeColorGreen {
@@ -212,7 +215,6 @@ h1 {
     clear: both;
     padding-top: 20px;
     text-align: center;
-    /*margin-right: 50px;*/
 }
 
 h5 {

@@ -2,24 +2,27 @@
   <img src="./images/resetGame.jpg">
 </div> -->
 
-    <!-- <p>{{name}}</p> -->
+    <p>{{name}}</p>
+
+    <button data-ng-click = getName()>LogIN</button>
+    <p> Name : {{userName}} </p>
 
     <div id="gameboard" data-ng-click="makeNextMoveAt($event)">
       <div class="row">
-        <div class="cell" class="{{cell[1]}}" id="1" change-color>{{cell[1]}}</div>
-        <div class="cell" class="{{cell[2]}}" id="2" change-color>{{cell[2]}}</div> 
-        <div class="cell" class="{{cell[3]}}" id="3" change-color>{{cell[3]}}</div>
+        <div class="cell" class="{{cell[1]}}" id="1" data-ng-class='AddClassToCell(1)' data-change-color>{{cell[1]}}</div>
+        <div class="cell" class="{{cell[2]}}" id="2" data-ng-class='AddClassToCell(2)' data-change-color>{{cell[2]}}</div> 
+        <div class="cell" class="{{cell[3]}}" id="3" data-ng-class='AddClassToCell(3)' data-change-color>{{cell[3]}}</div>
       </div>
       <div class="middle_line"></div>
       <div class="row">
-        <div class="cell" class="{{cell[4]}}" id="4" change-color>{{cell[4]}}</div>
-        <div class="cell" class="{{cell[5]}}" id="5" change-color>{{cell[5]}}</div>
-        <div class="cell" class="{{cell[6]}}" id="6" change-color>{{cell[6]}}</div>
+        <div class="cell" class="{{cell[4]}}" id="4" data-ng-class='AddClassToCell(4)' data-change-color>{{cell[4]}}</div>
+        <div class="cell" class="{{cell[5]}}" id="5" data-ng-class='AddClassToCell(5)' data-change-color>{{cell[5]}}</div>
+        <div class="cell" class="{{cell[6]}}" id="6" data-ng-class='AddClassToCell(6)' data-change-color>{{cell[6]}}</div>
       </div>
       <div class="row">
-        <div class="cell" class="{{cell[7]}}" id="7" change-color>{{cell[7]}}</div>
-        <div class="cell" class="{{cell[8]}}" id="8" change-color>{{cell[8]}}</div>
-        <div class="cell" class="{{cell[9]}}" id="9" change-color>{{cell[9]}}</div>
+        <div class="cell" class="{{cell[7]}}" id="7" data-ng-class='AddClassToCell(7)' data-change-color>{{cell[7]}}</div>
+        <div class="cell" class="{{cell[8]}}" id="8" data-ng-class='AddClassToCell(8)' data-change-color>{{cell[8]}}</div>
+        <div class="cell" class="{{cell[9]}}" id="9" data-ng-class='AddClassToCell(9)' data-change-color>{{cell[9]}}</div>
       </div>
     </div>
 
@@ -60,7 +63,12 @@
     <img id="tickle" src="../../images/tickleMe.jpg" >
   </div> -->
 
-
+  <ul>
+    <li><h3>LeaderBoard</h3>
+    <li data-ng-repeat="(name, score) in leaderData.name">
+      <p>{{name}} : {{score}}</p>
+    </li>
+  </ul>
     
  
 

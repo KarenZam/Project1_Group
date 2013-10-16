@@ -12,8 +12,6 @@ angular.module('TickeyApp')
                     });
                     element.bind('mouseleave', function(objEvent) {
                          objEvent.target.classList.remove('changeColorGreen');
-                         // alert("mouse leaves");
-                         console.log("mouse leaves, color back to normal!");
                     });
                }
           }

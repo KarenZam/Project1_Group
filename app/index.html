@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Tickey</title>
+    <title>Ze Tic Tac Toe</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
@@ -20,7 +20,6 @@
         <link rel="stylesheet" href="styles/main.css">
         <link rel="stylesheet" href="styles/animate-custom.css">
         <!-- endbuild -->
-    
 
   </head>
   <body data-ng-app="TickeyApp">
@@ -54,6 +53,9 @@
     <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/angular-localstorage/angular-local-storage.js"></script>
 
+    <script src="https://cdn.firebase.com/v0/firebase.js"></script>
+    <script src="https://cdn.firebase.com/libs/angularfire/0.3.0/angularfire.min.js"></script>
+
     <script src="scripts/app.js"></script> 
     <script src="scripts/controllers/game_board.js"></script>
     <script src="scripts/controllers/how_to.js"></script>
@@ -62,6 +64,7 @@
     <script src="scripts/directives/change_color.js"></script>
 
     
+        <script src="scripts/controllers/MatchPlayer.js"></script>
         <!-- endbuild -->
 </body>
 </html>
