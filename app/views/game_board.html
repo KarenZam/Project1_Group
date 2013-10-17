@@ -6,6 +6,7 @@
 
     <button data-ng-click = getName()>LogIN</button>
     <p> Name : {{userName}} </p>
+    <p> Score : {{leaderData.users[userName]}} <p>
 
     <div id="gameboard" data-ng-click="makeNextMoveAt($event)">
       <div class="row">

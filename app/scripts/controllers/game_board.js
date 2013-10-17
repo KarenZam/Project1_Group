@@ -20,6 +20,7 @@ angular.module('TickeyApp')
   $scope.mySymbol = $routeParams.mySymbol;
   $scope.gameBoard = [];
   $scope.room = { board: ["", "", "", "", "", "", "", "", ""]};
+  $rootScope.IsOnLineGame;
 
   // $scope.room = {boards:
   //   {
@@ -32,19 +33,34 @@ angular.module('TickeyApp')
   $scope.promise = angularFire(gameBoardRef, $scope, 'room', {});
 
   $scope.promise.then (function () {
+    
+    console.log("inside promise"); ///////////////////////////////////////
+    console.log("route param id : "+$routeParams.id); //////////////////////////////
+
+    if (!$routeParams.id) {
+      $rootScope.IsOnLineGame = false;
+    } else {
+      $rootScope.IsOnLineGame = true;
+    }
+
+    console.log("IsOnLineGame : "+$rootScope.IsOnLineGame);
+
     if ($rootScope.IsOnLineGame == true) {
-      $scope.gameBoard[1]="x";
       if ($scope.gameBoard.length == 0 && $routeParams.mySymbol == 'x') {
         console.log ("I am the first move : "+ $routeParams.mySymbol);
-        // $scope.makeMyMove();
+        $scope.makeMyMove();
       } else {
         console.log ("I am second Move symbol : "+ $routeParams.mySymbol);
-        // $scope.waitForOpponentToMove();
+        $scope.waitForOpponentToMove();
       }
     }
-  });  
+  }); 
 
-  // $scope.waitForOpponentToMove = function() {
+  $scope.OnlineMakeNextMoveAt = function(objEvent) {
+    
+  };
+
+  $scope.waitForOpponentToMove = function() {
   //     gameBoardRef.once('child_added', function(snapshot) {
   //       // gameBoardRef.off('child_added');
         
@@ -58,9 +74,9 @@ angular.module('TickeyApp')
   //         $scope.makeMyMove();
   //       }
   //     });
-  //   };
+    };
     
-  //   $scope.makeMyMove = function() {
+    $scope.makeMyMove = function() {
   //     $scope.listenForMyClick();
       
   //     if ($scope.isWinning()) {
@@ -72,7 +88,7 @@ angular.module('TickeyApp')
   //     } else {
   //       $scope.waitForOpponentToMove();
   //     }
-  //   }
+    };
 
   //   $scope.listenForMyClick = function() {
   //     // handle click event on cell 
@@ -98,7 +114,9 @@ angular.module('TickeyApp')
   $scope.leaderData = {users: {}}; 
   var leaderDataRef = new Firebase('https://tictactoezam.firebaseio.com/');
   $scope.p = angularFire(leaderDataRef, $scope, "leaderData"); // p for promise
-        // implicit  
+        // implicit 
+
+  $scope.userCreatedInFirebase = false; // by default
 
 
   $scope.getName = function() {
@@ -114,6 +132,11 @@ angular.module('TickeyApp')
     $scope.userCreatedInFirebase = true;     //////////////////////////////////////////////
   };
 
+  $scope.displayWinnerAgainComputerFireBase = function() {
+    if ($scope.userCreatedInFirebase == true) {
+      $scope.leaderData.users[$scope.userName]++;  
+    }
+  };
   // $scope.addWinToLeaderBoard = function() {
   //   if ($scope.leaderData.name.hasOwnProperty($scope.userName)) {    
   //     $scope.leaderData.name[$scope.userName]++;  
@@ -249,20 +272,25 @@ angular.module('TickeyApp')
 
       // window.eventObj = objEvent;   // debug only, not for production!
 
-  			location = $scope.cellObj.target.id;
+  		location = $scope.cellObj.target.id;
 
+      if ($rootScope.IsOnLineGame == true) {
+        $scope.OnlineMakeNextMoveAt(objEvent);
+      }
+      else {
   			if ($scope.currentPlayer=="start") { 
   				$scope.initializePlayer(); 
   			};
   			if (!$scope.currentSquareClickedAlready(location)) {
-  				$scope.markSquareAsOccupiedAt(location);
+  			 $scope.markSquareAsOccupiedAt(location);
     			if (!$scope.isMeaWinner() && !$scope.isDraw()) {
-              $scope.swapCurrentPlayerToOpponent();
-    					if ($scope.playComputer == true) {
-                  $timeout($scope.computerPlay, 400);
-    					}
+            $scope.swapCurrentPlayerToOpponent();
+    				if ($scope.playComputer == true) {
+              $timeout($scope.computerPlay, 400);
+    				}
     			}
   			}
+      }
 		};
 
 		$scope.initializePlayer = function() {
@@ -417,6 +445,7 @@ angular.module('TickeyApp')
 				if ($scope.currentPlayer == $scope.playerIs) {
 					bootbox.alert("You beat the computer! Bravo");
                              ////////////// adding to firebase! //////////////
+          $scope.displayWinnerAgainComputerFireBase();
 				}
 				else {
 					bootbox.alert("You lost! Try again!");
