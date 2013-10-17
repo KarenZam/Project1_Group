@@ -36,7 +36,7 @@ angular.module('TickeyApp')
 
 	$scope.joinWaitingRoom = function () {
 		var gameBoardNumber = $scope.waitingRoom.gameBoardNumber;
-		console.log("gameboard number : "+gameBoardNumber)
+		console.log("gameboard number : "+ gameBoardNumber);
 		$scope.waitingRoom = {};
 		$rootScope.IsOnLineGame = true;
 
