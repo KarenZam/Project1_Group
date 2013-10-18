@@ -10,8 +10,12 @@
     <p> Total Score : {{leaderData.users[userName]}} </p><p>
   </p></div>
 
-  <div id="onlineGame_WhoUare" data-ng-show="IsOnLineGame">
+  <div class="onlineGame_WhoUare" data-ng-show="IsOnLineGame">
     <h4>On-line game! you are "{{mySymbol}}"</h4>
+  </div>
+  <div class="onlineGame_WhoUare" data-ng-show="!IsOnLineGame">
+    <h4>You are off line</h4>
+    <h4>you can either play against the computer or a friend on the same computer!</h4>
   </div>
 
   <div class="onlineGameSentence" id="onlineGameWating" data-ng-show="!myTurn && IsOnLineGame">
@@ -50,8 +54,12 @@
   </div>
 
   <div id="bottomButton">
-    <div class="boxBottom" data-ng-click="startTimer()"><p>{{seconds}}s</p></div>
-    <div class="boxBottom" data-ng-click="startTimer()"><img src="./images/timer.jpg" id="timer"></div>
+    <div class="boxBottom" data-ng-click="startTimer()" data-ng-hide="IsOnLineGame">
+      <p>{{seconds}}s</p>
+    </div>
+    <div class="boxBottom" data-ng-click="startTimer()" data-ng-hide="IsOnLineGame">
+      <img src="./images/timer.jpg" id="timer">
+    </div>
     
     <div data-ng-show="playComputer" class="boxBottom" class="playerMode" data-ng-click="switchLevelMode()">
       <img src="./images/level_{{levelComputer}}.png" id="levelNb">
@@ -79,8 +87,8 @@
   </div> -->
 </div>
 
-  <ul>
-    <h3>LeaderBoard</h3>
+<h3>LeaderBoard</h3>
+  <ul id="leaderBoard">
     <li data-ng-repeat="(name, score) in leaderData.users">
       <p>{{name}} : {{score}}</p>
     </li>
