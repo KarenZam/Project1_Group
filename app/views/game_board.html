@@ -2,19 +2,24 @@
   <img src="./images/resetGame.jpg">
 </div> -->
 
-  <p>{{name}}</p>
+  
+  <button id="loginbox" data-ng-click = getName()>Log In</button>
+  <div id="DisplayNameAndScore" data-ng-show="userCreatedInFirebase">
+    <p> Online score <p>
+    <p> Name : {{userName}} </p>
+    <p> Total Score : {{leaderData.users[userName]}} <p>
+  </div>
 
-  <button data-ng-click = getName()>LogIN</button>
-  <p> Name : {{userName}} </p>
-  <p> Score : {{leaderData.users[userName]}} <p>
-  <div data-ng-show="IsOnLineGame">
-    <p>you are in on-line game! you are {{mySymbol}}</p>
+  <div id="onlineGame_WhoUare" data-ng-show="IsOnLineGame">
+    <h4>On-line game! you are "{{mySymbol}}"</h4>
   </div>
-  <div data-ng-show="IsOnLineGameWaitingOponnentMove && IsOnLineGame">
-    <p>you are waiting for the oponnent to move!</p>
+
+  <div class="onlineGameSentence" id="onlineGameWating" data-ng-show="!myTurn && IsOnLineGame">
+    <h4>Waiting for the oponnent to move!</h4>
   </div>
-  <div data-ng-show="!IsOnLineGameWaitingOponnentMove && IsOnLineGame">
-    <p>It's your turn!</p>
+
+  <div class="onlineGameSentence" id="onlineGameMyTurn" data-ng-show="myTurn && IsOnLineGame">
+    <h4>It's your turn!</h4>
   </div>
 
   <div id="gameboard" data-ng-click="makeNextMoveAt($event)">
@@ -77,7 +82,7 @@
 
   <ul>
     <li><h3>LeaderBoard</h3>
-    <li data-ng-repeat="(name, score) in leaderData.name">
+    <li data-ng-repeat="(name, score) in leaderData.users | partition:3">
       <p>{{name}} : {{score}}</p>
     </li>
   </ul>

@@ -2,19 +2,11 @@
 
 angular.module('TickeyApp')
 	.controller('GameBoardCtrl', 
-		function ($scope, $rootScope, $timeout, localStorageService, angularFire, $routeParams) {
-
+		function ($scope, $rootScope, $timeout, localStorageService, angularFire, $routeParams, $location) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////     PLAY WITH FIREBASE     ///////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
-  
-  /************     VERY USEFULL     ********************
-  $scope.gameBoardId = $routeParams.id;
-  $scope.mySymbol = $routeParams.mySymbol;
-  console.log("route param id : " + $scope.gameBoardId);
-  console.log("symbol : " + $scope.mySymbol);
-  *************     VERY USEFULL     *********************/
 
   $scope.gameBoardId = $routeParams.id;
   $scope.mySymbol = $routeParams.mySymbol;
@@ -23,70 +15,103 @@ angular.module('TickeyApp')
   $scope.cellChanged;
   $rootScope.IsOnLineGame;
   $scope.room = { board: ["", "", "", "", "", "", "", "", "",""]};
-  $scope.currentPlayer;
-  $scope.IsOnLineGameWaitingOponnentMove = false;
+  $scope.currentPlayer = "start";
+  $scope.myTurn = false;
 
   var gameBoardRef = new Firebase('https://tictactoezam.firebaseio.com/room'+ $routeParams.id);
   $scope.promise = angularFire(gameBoardRef, $scope, 'room');
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////// EDDIE //////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+
   $scope.promise.then (function () {
-    
-    console.log("inside promise"); ///////////////////////////////////////
-    console.log("route param id : "+$routeParams.id); //////////////////////////////
+    console.log("in promise");
+    if (!$routeParams.id && ($routeParams.mySymbol=="o" || $routeParams.mySymbol=="x")) {
+      bootbox.alert("you don't have any opponent, try again.");
+      $location.path('/');
+    }
 
     if (!$routeParams.id) {
       $rootScope.IsOnLineGame = false;
     } else {
       $rootScope.IsOnLineGame = true;
       $scope.cleanBoard();
-      $scope.cellChanged = 0;
-      $scope.room = { board: ["", "", "", "", "", "", "", "", "",""]};
     }
+    $scope.room.board = ["", "", "", "", "", "", "", "", "",""];
 
-    console.log("IsOnLineGame : "+$rootScope.IsOnLineGame);
-
-    if ($scope.cellChanged == 0 && $rootScope.IsOnLineGame == true) {
-      if ($routeParams.mySymbol == 'x') {
-        console.log ("I am the first move : "+ $routeParams.mySymbol);
-        $scope.currentPlayer = $routeParams.mySymbol;
-        // $scope.makeMyMove();
-      } else {
-
-        console.log ("I am second Move symbol : "+ $routeParams.mySymbol);
-        
-        $scope.IsOnLineGameWaitingOponnentMove = true;
-        $timeout($scope.waitForOpponentToMove, 5000);
+    if ($routeParams.mySymbol == 'x') {
+      console.log("I am First Move: Symbol: " + $routeParams.mySymbol);
+      $scope.myTurn = true;
+    } else {
+      console.log("I am Second Move: Symbol: " + $routeParams.mySymbol);
+      $scope.myTurn = false;
+    }
+    });
+    
+    gameBoardRef.on('value', function(snapshot) {
+      if (!$scope.IsOnLineGame) {
+        return;
       }
-    }
-  }); 
+      if (!$scope.myTurn) {
+        if (snapshot.val() != null) {
+          if (!arrays_equal(snapshot.val().board, $scope.room.board)) {
+            // console.log("diff gameboard"); 
+            $scope.onLinePrintBoard(snapshot.val());                                              
+            if ($scope.onLineIsMeALoser()) {
+              // redirect to match player if play again
+            } else if ($scope.onLineIsDraw() ) {
+              $scope.onLineDisplayDraw();  
+              // redirect to match player if play again
+              } else {
+              $scope.myTurn = true;
+              $scope.onLinePrintBoard(snapshot.val());
+            }
+          } else {
+            // console.log("same gameboard"); 
+          }
+        } else {
+          // console.log("snapshot is empty");
+        }
+      } else {
+        // console.log("it is my turn but I receive ");
+      }
+    });
+        
+  function arrays_equal(a,b) { return !(a<b || b<a); }
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////// EDDIE //////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
 
   $scope.onLinePlayerIs = function() {
       $scope.currentPlayer = $scope.mySymbol;  
   }
 
-  $scope.OnlineMakeNextMoveAt = function(objEvent) { /////////////
+  $scope.OnlineMakeNextMoveAt = function(objEvent) { 
     var location;
     $scope.cellObj = objEvent;  
     location = $scope.cellObj.target.id;
-    
-    if ($scope.IsOnLineGameWaitingOponnentMove) {
-      alert("It's not your turn yet!");
+    if (!$scope.myTurn) {
+      bootbox.alert("It's not your turn yet!");
       return;
     }
-    
+
     if (!$scope.currentSquareClickedAlready(location)) {
       $scope.onLineMarkSquareAsOccupiedAt(location);
       $scope.onLinePlayerIs();
+      $scope.myTurn = false;
       if ($scope.isMeaWinner()) {
-        $scope.onLineGameOver();
+        $timeout($scope.onLineGameOver, 2000);
         return;
       }
-      if ($scope.isDraw()) {
-        $scope.onLineGameOver();
+      if ($scope.onLineIsDraw()) {
+        $scope.onLineDisplayDraw();
+        $timeout($scope.onLineGameOver, 2000);
         return;
       }
-      $scope.IsOnLineGameWaitingOponnentMove = true;
-      $timeout($scope.waitForOpponentToMove, 5000); 
     }
   };
 
@@ -94,36 +119,14 @@ angular.module('TickeyApp')
         $scope.cell[location] = $scope.mySymbol;
         $scope.cellChanged++;
         $scope.room.board[location] = $scope.mySymbol;  //Symbol in Firebase
-        console.log("the cell has been marked");
     };
-  
-
-  $scope.waitForOpponentToMove = function() {
-    console.log("inside wait for opponent!");
-  
-    gameBoardRef.once('child_changed', function(snapshot) {
-      console.log("opponent moved");
-      $scope.IsOnLineGameWaitingOponnentMove = false;
-      $scope.onLinePrintBoard(snapshot.val());
-      $scope.onLineIsMeALoser();
-      if ($scope.isDraw()) {
-        $scope.onLineGameOver();
-      }
-    });   
-
-  };
 
   $scope.onLinePrintBoard = function(newBoardData) {
-    console.log("onLinePrintBoard");
     for (var i=1; i<=$scope.totalCellNumber; i++) {
-      console.log("i : "+i+" "+ newBoardData[i]+" "+$scope.cell[i]);
       if (newBoardData[i] != $scope.cell[i]) {
-        $scope.cell[i] = newBoardData[i];
-        $scope.cellChanged ++;
-        console.log("location changed : "+i);
+        $scope.cell[i] = newBoardData.board[i];
       }
     }
-    console.log("number of cells marked : "+$scope.cellChanged);
   };
 
   $scope.onLineIsMeALoser = function() {
@@ -134,23 +137,57 @@ angular.module('TickeyApp')
       $scope.oponentSymbol = "x"; 
     }
     $scope.currentPlayer = $scope.oponentSymbol;
-  
-    if ($scope.IsOneLineCrossed() || $scope.IsOneColumnCrossed() 
-      || $scope.IsDiagonalCrossed()) {
+    if ( $scope.IsOneLineCrossed() || $scope.IsOneColumnCrossed() 
+      || $scope.IsDiagonalCrossed() ) {
       bootbox.alert("You lost! Try again!")
-      $scope.onLineGameOver();
+      $timeout($scope.onLineGameOver, 2000);
+      $scope.currentPlayer = start;
+      return true;
     }
+    $scope.currentPlayer = "start";
+    return false;
   };
 
-  $scope.onLineGameOver = function() {
-    $scope.room = {};
-    $scope.cleanBoard();
-    console.log("Game Over!");
+  $scope.onLineIsDraw = function() {
+    var numberOccupiedCell = 0
+    for (var i = 1; i <= $scope.totalCellNumber; i++) {
+      if ($scope.cell[i]=="x" || $scope.cell[i]=="o") {
+        numberOccupiedCell++;
+      }
+    }
+    if (numberOccupiedCell == $scope.totalCellNumber) {
+      return true;
+    }
+    return false;
   };
+
+  $scope.onLineDisplayDraw = function() {
+    bootbox.alert("It's a draw, try again!");
+    $timeout($scope.onLineGameOver, 2000);
+  }; 
+
+  $scope.onLineGameOver = function() {
+    var onlineCurrentLocation;
+    $timeout($scope.onLineTimeoutDeleteRoomFirebase, 5000);
+    $scope.cleanBoard();
+    $scope.currentPlayer = "start";
+    $scope.cellChanged = 0;
+    console.log("Game Over, play again!");
+  
+    ////////////////////////////////////////////////////////////////
+    window.location.reload(true);
+    ////////////////////////////////////////////////////////////////
+  };
+
+  $scope.onLineTimeoutDeleteRoomFirebase = function() {
+    $scope.room = {};
+  };
+
   
 ///////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////    DISPLAY WITH FIREBASE   ///////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
+  
   $scope.leaderData = {users: {}}; 
   var leaderDataRef = new Firebase('https://tictactoezam.firebaseio.com/');
   $scope.p = angularFire(leaderDataRef, $scope, "leaderData"); // p for promise
@@ -163,18 +200,25 @@ angular.module('TickeyApp')
     $scope.userName = prompt ("What's your user name ?");
     if ($scope.leaderData.users.hasOwnProperty($scope.userName)) {    
       alert($scope.userName+", your previous score is : "+$scope.leaderData.users[$scope.userName]);
+      if ($scope.playComputer == true) {
+        $scope.leaderData.users[$scope.userName] = $scope.leaderData.users[$scope.userName] 
+            + $scope.nbWin1 ;
+      }
+            /////////////////////////////////////////////////////
     }
     else {
       $scope.p.then( function() {
         $scope.leaderData.users[$scope.userName] = 0;
       });
     }
-    $scope.userCreatedInFirebase = true;     //////////////////////////////////////////////
+    $scope.userCreatedInFirebase = true;     
   };
 
   $scope.displayWinnerAgainComputerFireBase = function() {
+    console.log("writing score in firebase");
     if ($scope.userCreatedInFirebase == true) {
       $scope.leaderData.users[$scope.userName]++;  
+      console.log("writing score in firebase inside if");
     }
   };
   // $scope.addWinToLeaderBoard = function() {
@@ -256,7 +300,6 @@ angular.module('TickeyApp')
 ////////////////////////////        WHICH PAGE !!!          ///////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-
     $rootScope.is_how_to_page = false;
     $rootScope.is_game_board_page_small_button = true;
     $rootScope.is_home_page = false;
@@ -267,7 +310,7 @@ angular.module('TickeyApp')
 
 
 		$scope.playComputer = true;
-    $scope.currentPlayer = "start";
+    // $scope.currentPlayer = "start";
 		$scope.totalLine = 3;
 		$scope.totalColumn = 3;
 		$scope.totalCellbyLine = $scope.totalColumn;
@@ -348,6 +391,8 @@ angular.module('TickeyApp')
 			for (var i=1; i<=$scope.totalCellNumber; i++) {
 				$scope.cell[i]="";
 			}
+      $scope.cellChanged = 0;
+      $scope.endOfGame();
 		}	
 
 		$scope.currentSquareClickedAlready = function(location) { 
@@ -399,13 +444,18 @@ angular.module('TickeyApp')
 			}
 		}
 
+    $scope.AddClassToCell = function(location) {
+      if ($scope.cell[location] != "") {
+        return $scope.cell[location];
+      }
+    };
+
 		$scope.isDraw = function() {
   			if ($scope.cellChanged == $scope.totalCellNumber) {
             if ($scope.timerRunning) {
               $scope.cleanTimer();
             }
         		bootbox.alert("It's a draw, try again!");
-        		$scope.endOfGame();
             $timeout($scope.cleanBoard, 2000);
   				return true;
       		}
@@ -413,13 +463,13 @@ angular.module('TickeyApp')
   		}
 
 		$scope.isMeaWinner = function() {
-      console.log("inside isMeaWinner");
   			if ($scope.IsOneLineCrossed() || $scope.IsOneColumnCrossed() || $scope.IsDiagonalCrossed()) {
     			if ($scope.timerRunning) {
             $scope.cleanTimer();
           }
           if ($rootScope.IsOnLineGame) {
-            bootbox.alert("You won!");
+            bootbox.alert("You won!"); 
+            $scope.displayWinnerAgainComputerFireBase();
           }
           else {
             $scope.displayWinner();  
@@ -462,16 +512,20 @@ angular.module('TickeyApp')
     //////////////////////////////////////////////////
 
     $scope.addingScore = function () {
-      if ($scope.currentPlayer == $scope.playerIs) {
-        $scope.nbWin1++;
-        return;
-      } 
-      if ($scope.playComputer) {
-        $scope.nbWinComputer ++;
+      if (!$rootScope.IsOnLineGame) {
+        if ($scope.currentPlayer == $scope.playerIs) {
+          $scope.nbWin1++;
+          return;
+        } 
+        if ($scope.playComputer) {
+          $scope.nbWinComputer ++;
+        }
+        else {
+          $scope.nbWin2 ++;
+        }
+        return; 
       }
-      else {
-        $scope.nbWin2 ++;
-      }
+      $scope.displayWinnerAgainComputerFireBase();
     }
 
     ///////////////////////////////////////////////////
@@ -479,7 +533,7 @@ angular.module('TickeyApp')
 		$scope.displayWinner = function() {
       $scope.addingScore();
 			if(!$scope.playComputer) {
-				if ($scope.currentPlayer=="x") {
+				if ($scope.currentPlayer == "x") {
     			bootbox.alert("x wins! Bravo");
   				}
   				else {
@@ -496,20 +550,12 @@ angular.module('TickeyApp')
 					bootbox.alert("You lost! Try again!");
 				}
 			}
-  			// $rootScope.gameEndShowButton = true;
-  		$scope.endOfGame();
       $timeout($scope.cleanBoard, 2000);
 		};
 
     $scope.endOfGame = function() {
       $scope.currentPlayer = "start";
       $scope.cellChanged = 0;
-    };
-
-    $scope.AddClassToCell = function(location) {
-      if ($scope.cell[location] != "") {
-        return $scope.cell[location];
-      }
     };
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -586,7 +632,6 @@ angular.module('TickeyApp')
       {
         computerPlayer = "o";
       }
-      console.log("computer player : "+computerPlayer);
     if (!$scope.computerCheckLine(computerPlayer)) {
           if (!$scope.computerCheckColumn(computerPlayer)) {
             if (!$scope.computerCheckDiagonal(computerPlayer)) {

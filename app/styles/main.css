@@ -1,6 +1,6 @@
 /*HEADER*/
 
-h2, h3, h4 {
+h2, h3, h4, p, span {
     /*font-family: 'The Girl Next Door', cursive;*/
     font-family: 'Josefin Sans', sans-serif;
 }
@@ -44,6 +44,39 @@ h2, h3, h4 {
 }
 
 /*END HEADER*/
+
+/* LOGIN BOX */
+#loginbox {
+    margin-left: 20px;
+    width: 100px;
+    height: 30px;
+    background-color: white;
+    border: 1px solid #ff69b4;
+    margin-bottom: 10px;
+}
+#DisplayNameAndScore {
+    float: right;
+    margin-right: 20px;
+}
+/* LOGIN BOX */
+
+/* ONLINE DISPLAY */
+#onlineGame_WhoUare {
+    margin-left: 20px;
+}
+
+.onlineGameSentence {
+    margin-left: 40px;
+}
+
+#onlineGameWating {
+    color: green;
+}
+
+#onlineGameMyTurn {
+    color: red;
+}
+/* ONLINE DISPLAY */
 
 body {
     clear: both;
@@ -119,11 +152,17 @@ h1 {
     color: green;
 }
 
-#bigPlay {
-    width: 225px;
-    height: 225px;
-    margin: auto;
-    margin-top: 70px;
+
+.homePagebuttons {
+    border: 4px solid #ff69b4;
+    text-align: center;
+    line-height: 200px;
+    padding-top: 60px;
+    width: 200px;
+    height: 200px;
+    margin-top: 30px;
+    margin-left: 300px;
+    border-radius: 100%;
 }
 
 #howToParagraphe {
