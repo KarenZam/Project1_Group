@@ -2,7 +2,8 @@
 
 angular.module('TickeyApp')
 	.controller('GameBoardCtrl', 
-		function ($scope, $rootScope, $timeout, localStorageService, angularFire, $routeParams, $location) {
+		function ($scope, $rootScope, $timeout, localStorageService, angularFire,
+      $routeParams, $location) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////     PLAY WITH FIREBASE     ///////////////////////////////////
@@ -32,9 +33,9 @@ angular.module('TickeyApp')
       bootbox.alert("you don't have any opponent, try again.");
       $location.path('/');
     }
-
     if (!$routeParams.id) {
       $rootScope.IsOnLineGame = false;
+      return;
     } else {
       $rootScope.IsOnLineGame = true;
       $scope.cleanBoard();
@@ -203,8 +204,7 @@ angular.module('TickeyApp')
       if ($scope.playComputer == true) {
         $scope.leaderData.users[$scope.userName] = $scope.leaderData.users[$scope.userName] 
             + $scope.nbWin1 ;
-      }
-            /////////////////////////////////////////////////////
+      }     
     }
     else {
       $scope.p.then( function() {
@@ -215,21 +215,10 @@ angular.module('TickeyApp')
   };
 
   $scope.displayWinnerAgainComputerFireBase = function() {
-    console.log("writing score in firebase");
     if ($scope.userCreatedInFirebase == true) {
       $scope.leaderData.users[$scope.userName]++;  
-      console.log("writing score in firebase inside if");
     }
   };
-  // $scope.addWinToLeaderBoard = function() {
-  //   if ($scope.leaderData.name.hasOwnProperty($scope.userName)) {    
-  //     $scope.leaderData.name[$scope.userName]++;  
-  //   }
-  // };
-
-  // $scope.deletePlayer = function() {
-  //   delete $scope.leaderData.name[$scope.userName];
-  // }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////    DISPLAY WITH LOCALSTORAGE   ///////////////////////////////

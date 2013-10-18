@@ -2,38 +2,54 @@
   <img src="./images/resetGame.jpg">
 </div> -->
 
-    <p>{{name}}</p>
+  
+  <button id="loginbox" data-ng-click="getName()">Log In</button>
+  <div id="DisplayNameAndScore" data-ng-show="userCreatedInFirebase">
+    <p> Online score </p><p>
+    </p><p> Name : {{userName}} </p>
+    <p> Total Score : {{leaderData.users[userName]}} </p><p>
+  </p></div>
 
-    <button data-ng-click="getName()">LogIN</button>
-    <p> Name : {{userName}} </p>
+  <div id="onlineGame_WhoUare" data-ng-show="IsOnLineGame">
+    <h4>On-line game! you are "{{mySymbol}}"</h4>
+  </div>
 
-    <div id="gameboard" data-ng-click="makeNextMoveAt($event)">
-      <div class="row">
-        <div class="cell" class="{{cell[1]}}" id="1" data-ng-class="AddClassToCell(1)" data-change-color="">{{cell[1]}}</div>
-        <div class="cell" class="{{cell[2]}}" id="2" data-ng-class="AddClassToCell(2)" data-change-color="">{{cell[2]}}</div> 
-        <div class="cell" class="{{cell[3]}}" id="3" data-ng-class="AddClassToCell(3)" data-change-color="">{{cell[3]}}</div>
-      </div>
-      <div class="middle_line"></div>
-      <div class="row">
-        <div class="cell" class="{{cell[4]}}" id="4" data-ng-class="AddClassToCell(4)" data-change-color="">{{cell[4]}}</div>
-        <div class="cell" class="{{cell[5]}}" id="5" data-ng-class="AddClassToCell(5)" data-change-color="">{{cell[5]}}</div>
-        <div class="cell" class="{{cell[6]}}" id="6" data-ng-class="AddClassToCell(6)" data-change-color="">{{cell[6]}}</div>
-      </div>
-      <div class="row">
-        <div class="cell" class="{{cell[7]}}" id="7" data-ng-class="AddClassToCell(7)" data-change-color="">{{cell[7]}}</div>
-        <div class="cell" class="{{cell[8]}}" id="8" data-ng-class="AddClassToCell(8)" data-change-color="">{{cell[8]}}</div>
-        <div class="cell" class="{{cell[9]}}" id="9" data-ng-class="AddClassToCell(9)" data-change-color="">{{cell[9]}}</div>
-      </div>
+  <div class="onlineGameSentence" id="onlineGameWating" data-ng-show="!myTurn && IsOnLineGame">
+    <h4>Waiting for the oponnent to move!</h4>
+  </div>
+
+  <div class="onlineGameSentence" id="onlineGameMyTurn" data-ng-show="myTurn && IsOnLineGame">
+    <h4>It's your turn!</h4>
+  </div>
+
+  <div id="gameboard" data-ng-click="makeNextMoveAt($event)">
+    <div class="row">
+      <div class="cell" class="{{cell[1]}}" id="1" data-ng-class="AddClassToCell(1)" data-change-color="">{{cell[1]}}</div>
+      <div class="cell" class="{{cell[2]}}" id="2" data-ng-class="AddClassToCell(2)" data-change-color="">{{cell[2]}}</div> 
+      <div class="cell" class="{{cell[3]}}" id="3" data-ng-class="AddClassToCell(3)" data-change-color="">{{cell[3]}}</div>
     </div>
-
-    <div id="score">
-      <p>Player 1: {{nbWin1}}</p>
-      <p data-ng-hide="playComputer"> Player 2: {{nbWin2}} </p>
-      <p data-ng-show="playComputer"> Computer: {{nbWinComputer}} </p>
+    <div class="middle_line"></div>
+    <div class="row">
+      <div class="cell" class="{{cell[4]}}" id="4" data-ng-class="AddClassToCell(4)" data-change-color="">{{cell[4]}}</div>
+      <div class="cell" class="{{cell[5]}}" id="5" data-ng-class="AddClassToCell(5)" data-change-color="">{{cell[5]}}</div>
+      <div class="cell" class="{{cell[6]}}" id="6" data-ng-class="AddClassToCell(6)" data-change-color="">{{cell[6]}}</div>
     </div>
+    <div class="row">
+      <div class="cell" class="{{cell[7]}}" id="7" data-ng-class="AddClassToCell(7)" data-change-color="">{{cell[7]}}</div>
+      <div class="cell" class="{{cell[8]}}" id="8" data-ng-class="AddClassToCell(8)" data-change-color="">{{cell[8]}}</div>
+      <div class="cell" class="{{cell[9]}}" id="9" data-ng-class="AddClassToCell(9)" data-change-color="">{{cell[9]}}</div>
+    </div>
+  </div>
+
+
+<div data-ng-hide="IsOnLineGame">
+  <div id="score">
+    <p>Player 1: {{nbWin1}}</p>
+    <p data-ng-hide="playComputer"> Player 2: {{nbWin2}} </p>
+    <p data-ng-show="playComputer"> Computer: {{nbWinComputer}} </p>
+  </div>
 
   <div id="bottomButton">
-
     <div class="boxBottom" data-ng-click="startTimer()"><p>{{seconds}}s</p></div>
     <div class="boxBottom" data-ng-click="startTimer()"><img src="./images/timer.jpg" id="timer"></div>
     
@@ -51,21 +67,21 @@
     
     <!-- This is the stop timer button -->
     <!-- <button class="boxBottom" data-ng-click="stopTimer()"><p>END TIMER</p></button> -->
-
-    
-
   </div>
 
-  <h4 data-ng-show="playComputer" id="computerModePhrase">Level {{levelComputer}} : {{computerModeDescription[levelComputer]}}</h4>
+  <h4 data-ng-show="playComputer" id="computerModePhrase">
+    Level {{levelComputer}} : {{computerModeDescription[levelComputer]}}</h4>
+  
   <h4 data-ng-hide="playComputer" id="computerModePhrase">2 players mode!</h4>
 
   <!-- <div tickle-me>
     <img id="tickle" src="../../images/tickleMe.jpg" >
   </div> -->
+</div>
 
   <ul>
-    <li><h3>LeaderBoard</h3>
-    </li><li data-ng-repeat="(name, score) in leaderData.name">
+    <h3>LeaderBoard</h3>
+    <li data-ng-repeat="(name, score) in leaderData.users">
       <p>{{name}} : {{score}}</p>
     </li>
   </ul>

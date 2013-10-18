@@ -153,16 +153,20 @@ h1 {
 }
 
 
-.homePagebuttons {
-    border: 4px solid #ff69b4;
+#homePagebuttons {
+    margin: 30px auto 0;
+    width: 200px;
+}
+.homePageBox{
+    margin-top: 20px;
+    border-radius: 100%;
+    border: 5px solid #ff69b4;
     text-align: center;
     line-height: 200px;
     padding-top: 60px;
     width: 200px;
     height: 200px;
-    margin-top: 30px;
-    margin-left: 300px;
-    border-radius: 100%;
+    background-color: yellow;
 }
 
 #howToParagraphe {
