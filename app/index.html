@@ -19,6 +19,7 @@
         <!-- build:css(.tmp) styles/main.css -->
         <link rel="stylesheet" href="styles/main.css">
         <link rel="stylesheet" href="styles/animate-custom.css">
+        <link rel="stylesheet" media="(max-width: 800px)" href="styles/small-screen.css" />
         <!-- endbuild -->
 
   </head>
@@ -41,6 +42,11 @@
     </header>
 
     <div data-ng-view></div>
+
+    <footer>
+        <div id="designBy"><h4>@ designed by Zam.</h4></div>
+    </footer>
+
     <!-- change function makenextmove to handleClick -->
     
     <script src="bower_components/angular/angular.js"></script>

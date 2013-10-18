@@ -15,7 +15,7 @@
   </div>
   <div class="onlineGame_WhoUare" data-ng-show="!IsOnLineGame">
     <h4>You are off line</h4>
-    <h4>you can either play against the computer or a friend on the same computer!</h4>
+    <p>(2 players mode or against computer)</p>
   </div>
 
   <div class="onlineGameSentence" id="onlineGameWating" data-ng-show="!myTurn && IsOnLineGame">
@@ -78,18 +78,20 @@
     <!-- <button class="boxBottom" data-ng-click="stopTimer()"><p>END TIMER</p></button> -->
   </div>
 
-  <h4 data-ng-show="playComputer" id="computerModePhrase">
-    Level {{levelComputer}} : {{computerModeDescription[levelComputer]}}</h4>
-  
-  <h4 data-ng-hide="playComputer" id="computerModePhrase">2 players mode!</h4>
+  <div id="computerModePhrase">
+    <h4 data-ng-show="playComputer">
+      Level {{levelComputer}} : {{computerModeDescription[levelComputer]}}</h4>
+    <h4 data-ng-hide="playComputer">2 players mode!</h4>
+  </div>
 
   <!-- <div tickle-me>
     <img id="tickle" src="../../images/tickleMe.jpg" >
   </div> -->
 </div>
 
-<h3>LeaderBoard</h3>
+
   <ul id="leaderBoard">
+    <div id="leaderBoardTitle"> <h4>LeaderBoard</h4> </div>
     <li data-ng-repeat="(name, score) in leaderData.users">
       <p>{{name}} : {{score}}</p>
     </li>

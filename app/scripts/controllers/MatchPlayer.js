@@ -7,6 +7,8 @@ angular.module('TickeyApp')
    $scope.promise = angularFire(waitingRoomRef, $scope, "waitingRoom");
 
    $rootScope.IsOnLineGame = false;
+   $rootScope.is_how_to_page = false;
+   $rootScope.is_home_page = false;
    
 	function generateGameBoardNumber() {
 		return Math.floor(Math.random() * 123444456).toString(16);	
