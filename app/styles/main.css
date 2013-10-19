@@ -318,4 +318,25 @@ h5 {
     margin: 40px auto 40px;
 }
 
+/******************************************************/
+
+@media only screen and (max-device-width: 700px) {
+    .howToParagraphe {
+        width: 400px;
+    }
+
+    #title {
+        width: 400px;
+    }
+
+    #computerModePhrase {
+        width: 400px;
+    }
+
+    #designBy {
+        width: 400px;
+    }
+}
+
+
 
