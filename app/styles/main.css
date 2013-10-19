@@ -103,7 +103,7 @@ h1 {
     color: #2c3e50;
     text-align: center;
     margin: 0 auto 15px;
-    width: 700px;
+    width: 700px;               /*width: 700px;*/
     border-bottom: 3px solid #ff69b4;
 }
 
@@ -320,7 +320,7 @@ h5 {
 
 /******************************************************/
 
-@media only screen and (max-device-width: 700px) {
+/*@media only screen and (max-device-width: 700px) {
     .howToParagraphe {
         width: 400px;
     }
@@ -336,7 +336,7 @@ h5 {
     #designBy {
         width: 400px;
     }
-}
+}*/
 
 
 
