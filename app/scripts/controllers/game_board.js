@@ -189,6 +189,7 @@ angular.module('TickeyApp')
 ////////////////////////////    DISPLAY WITH FIREBASE   ///////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
   
+
   $scope.leaderData = {users: {}}; 
   var leaderDataRef = new Firebase('https://tictactoezam.firebaseio.com/');
   $scope.p = angularFire(leaderDataRef, $scope, "leaderData"); // p for promise
